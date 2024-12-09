@@ -7,75 +7,56 @@ const TabSwitcher = ({ tabs, onTabChange }) => {
     const handleTabClick = (index) => {
         if (activeTabIndex !== index) {
             setActiveTabIndex(index);
-            if (onTabChange) {
-                onTabChange(index); // Notify parent of tab change
-            }
+            onTabChange?.(index);
         }
     };
 
     const handlers = useSwipeable({
         onSwipedLeft: () => {
+            console.log("Swiped Left");
             if (activeTabIndex < tabs.length - 1) {
                 const newIndex = activeTabIndex + 1;
                 setActiveTabIndex(newIndex);
-                if (onTabChange) {
-                    onTabChange(newIndex); // Notify parent on swipe
-                }
+                onTabChange?.(newIndex);
             }
         },
         onSwipedRight: () => {
+            console.log("Swiped Right");
             if (activeTabIndex > 0) {
                 const newIndex = activeTabIndex - 1;
                 setActiveTabIndex(newIndex);
-                if (onTabChange) {
-                    onTabChange(newIndex); // Notify parent on swipe
-                }
+                onTabChange?.(newIndex);
             }
         },
         trackTouch: true,
         trackMouse: true,
-        delta: 10,
+        delta: 1,
+       
     });
 
-    let paddingClasses = "px-4 py-3"; // Default padding
-    if (tabs.length === 2) {
-        paddingClasses = "px-12 py-3";
-    } else if (tabs.length === 3) {
-        paddingClasses = "px-4 py-3";
-    } else if (tabs.length === 1) {
-        paddingClasses = "px-12 py-3";
-    } else {
-        paddingClasses = "px-4 py-2";
-    }
-
     return (
-        <div style={{height:"100%",padding:"10px 0px"}}>
-            <div >
-                <div style={{ display: "flex", gap: "20px", justifyContent: "center" }} >
+        <div style={{ height: "100%", padding: "10px 0px" }}>
+            {/* Tab Buttons */}
+            <div>
+                <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
                     {tabs.map((tab, index) => (
-                        <div
-                            key={tab.label}
-
-                            onClick={() => handleTabClick(index)}
-                        >
-                            {/* Vertical Separator with Fixed Margins */}
-                            {index !== 0 && (
-                                <div ></div>
-                            )}
-                            {/* Tab Label */}
-                            <span
-
-                            >
-                                {tab.label.toUpperCase()}
-                            </span>
+                        <div key={tab.label} onClick={() => handleTabClick(index)}>
+                            {index !== 0 && <div />}
+                            <span>{tab.label.toUpperCase()}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Content Area */}
+            {/* Swipeable Content Area */}
             <div
-                style={{height:"100%",background:"lightGrey",padding:"10px"}}
+                style={{
+                    height: "100%",
+                    width: "100%", // Ensure full swipeable width
+                    background: tabs[activeTabIndex].bg,
+                    
+                    touchAction: "pan-y", // Avoid browser interference
+                }}
                 {...handlers}
             >
                 {tabs[activeTabIndex] && tabs[activeTabIndex].component}
