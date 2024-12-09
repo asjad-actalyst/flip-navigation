@@ -1,37 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const TabSwitcher = ({ tabs, onTabChange }) => {
+const TabSwitcher = ({ tabs }) => {
     const [activeTabIndex, setActiveTabIndex] = useState(0);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Sync activeTabIndex with the current route
+    useEffect(() => {
+        const tabIndex = tabs.findIndex((tab) => tab.path === location.pathname);
+        if (tabIndex !== -1) {
+            setActiveTabIndex(tabIndex);
+        }
+    }, [location.pathname, tabs]);
 
     const handleTabClick = (index) => {
         if (activeTabIndex !== index) {
             setActiveTabIndex(index);
-            onTabChange?.(index);
+            navigate(tabs[index].path); // Navigate to the corresponding route
         }
     };
 
     const handlers = useSwipeable({
         onSwipedLeft: () => {
-            console.log("Swiped Left");
             if (activeTabIndex < tabs.length - 1) {
                 const newIndex = activeTabIndex + 1;
                 setActiveTabIndex(newIndex);
-                onTabChange?.(newIndex);
+                navigate(tabs[newIndex].path); // Navigate to the next route
             }
         },
         onSwipedRight: () => {
-            console.log("Swiped Right");
             if (activeTabIndex > 0) {
                 const newIndex = activeTabIndex - 1;
                 setActiveTabIndex(newIndex);
-                onTabChange?.(newIndex);
+                navigate(tabs[newIndex].path); // Navigate to the previous route
             }
         },
         trackTouch: true,
         trackMouse: true,
         delta: 1,
-       
     });
 
     return (
@@ -42,7 +50,9 @@ const TabSwitcher = ({ tabs, onTabChange }) => {
                     {tabs.map((tab, index) => (
                         <div key={tab.label} onClick={() => handleTabClick(index)}>
                             {index !== 0 && <div />}
-                            <span>{tab.label.toUpperCase()}</span>
+                            <span style={{ fontWeight: index === activeTabIndex ? "bold" : "" }}>
+                                {tab.label.toUpperCase()}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -51,15 +61,14 @@ const TabSwitcher = ({ tabs, onTabChange }) => {
             {/* Swipeable Content Area */}
             <div
                 style={{
-                    height: "100%",
+                    height: "98%",
                     width: "100%", // Ensure full swipeable width
                     background: tabs[activeTabIndex].bg,
-                    
                     touchAction: "pan-y", // Avoid browser interference
                 }}
                 {...handlers}
             >
-                {tabs[activeTabIndex] && tabs[activeTabIndex].component}
+                <h2 style={{ padding: "30px 0px" }}>{tabs[activeTabIndex] && tabs[activeTabIndex].component}</h2>
             </div>
         </div>
     );
