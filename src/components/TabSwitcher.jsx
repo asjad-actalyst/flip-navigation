@@ -4,37 +4,43 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const TabSwitcher = ({ tabs }) => {
     const [activeTabIndex, setActiveTabIndex] = useState(0);
+    const [activeGroupIndex, setActiveGroupIndex] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Sync activeTabIndex with the current route
+    // Sync activeTabIndex and activeGroupIndex with the current route
     useEffect(() => {
-        const tabIndex = tabs.findIndex((tab) => tab.path === location.pathname);
+        const tabIndex = tabs.findIndex((tab) => tab.path === location.pathname || tab.groups?.some((group) => group.path === location.pathname));
         if (tabIndex !== -1) {
             setActiveTabIndex(tabIndex);
+            const groupIndex = tabs[tabIndex].groups?.findIndex((group) => group.path === location.pathname) || 0;
+            setActiveGroupIndex(groupIndex);
         }
     }, [location.pathname, tabs]);
 
     const handleTabClick = (index) => {
         if (activeTabIndex !== index) {
             setActiveTabIndex(index);
-            navigate(tabs[index].path); // Navigate to the corresponding route
+            setActiveGroupIndex(0); // Reset group index when switching tabs
+            navigate(tabs[index].path);
         }
     };
 
-    const handlers = useSwipeable({
+    const tabHandlers = useSwipeable({
         onSwipedLeft: () => {
             if (activeTabIndex < tabs.length - 1) {
                 const newIndex = activeTabIndex + 1;
                 setActiveTabIndex(newIndex);
-                navigate(tabs[newIndex].path); // Navigate to the next route
+                setActiveGroupIndex(0); // Reset group index when switching tabs
+                navigate(tabs[newIndex].path);
             }
         },
         onSwipedRight: () => {
             if (activeTabIndex > 0) {
                 const newIndex = activeTabIndex - 1;
                 setActiveTabIndex(newIndex);
-                navigate(tabs[newIndex].path); // Navigate to the previous route
+                setActiveGroupIndex(0); // Reset group index when switching tabs
+                navigate(tabs[newIndex].path);
             }
         },
         trackTouch: true,
@@ -42,14 +48,47 @@ const TabSwitcher = ({ tabs }) => {
         delta: 1,
     });
 
+    const groupHandlers = useSwipeable({
+        onSwipedUp: () => {
+            const groups = tabs[activeTabIndex].groups || [];
+            if (activeGroupIndex < groups.length - 1) {
+                const newIndex = activeGroupIndex + 1;
+                setActiveGroupIndex(newIndex);
+                navigate(groups[newIndex].path); // Navigate to the next group's route
+            }
+        },
+        onSwipedDown: () => {
+            if (activeGroupIndex > 0) {
+                const newIndex = activeGroupIndex - 1;
+                setActiveGroupIndex(newIndex);
+                navigate(tabs[activeTabIndex].groups[newIndex].path); // Navigate to the previous group's route
+            }
+        },
+        trackTouch: true,
+        trackMouse: true,
+        delta: 1,
+    });
+    const handleGroupClick = (index) => {
+        if (activeGroupIndex !== index) {
+            setActiveGroupIndex(index); // Update the active group index
+            const selectedGroup = tabs[activeTabIndex]?.groups[index];
+            if (selectedGroup?.path) {
+                navigate(selectedGroup.path); // Navigate to the selected group's path
+            }
+        }
+    };
+
+
+    const currentTab = tabs[activeTabIndex];
+    const currentGroup = currentTab.groups ? currentTab.groups[activeGroupIndex] : null;
+
     return (
-        <div style={{ height: "100%", padding: "10px 0px" }}>
+        <div style={{ height: "100%" }} >
             {/* Tab Buttons */}
             <div>
-                <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+                <div style={{ display: "flex", gap: "20px", justifyContent: "center", padding: "10px" }}>
                     {tabs.map((tab, index) => (
                         <div key={tab.label} onClick={() => handleTabClick(index)}>
-                            {index !== 0 && <div />}
                             <span style={{ fontWeight: index === activeTabIndex ? "bold" : "" }}>
                                 {tab.label.toUpperCase()}
                             </span>
@@ -58,17 +97,29 @@ const TabSwitcher = ({ tabs }) => {
                 </div>
             </div>
 
+            <div style={{ display: "flex", gap: "20px", flexDirection: "column", position: "fixed", left: "0px", top: "40%", alignItems: "flex-start", padding: "15px" }}>
+                {tabs[activeTabIndex]?.groups && tabs[activeTabIndex]?.groups.map((group, index) => (
+                    <div key={group.label} onClick={() => handleGroupClick(index)}>
+                        <span style={{ fontWeight: index === activeGroupIndex ? "bold" : "" }}>
+                            {group.label.toUpperCase()}
+                        </span>
+                    </div>
+                ))}
+            </div>
+
+
             {/* Swipeable Content Area */}
             <div
                 style={{
-                    height: "98%",
+                    height: "95%",
                     width: "100%", // Ensure full swipeable width
-                    background: tabs[activeTabIndex].bg,
-                    touchAction: "pan-y", // Avoid browser interference
+                    background: currentTab.bg,
+                    touchAction: "none", // Prevent browser interference
                 }}
-                {...handlers}
+                {...groupHandlers}
+                {...tabHandlers}
             >
-                <h2 style={{ padding: "30px 0px" }}>{tabs[activeTabIndex] && tabs[activeTabIndex].component}</h2>
+                <h2 style={{ padding: "30px 0px", margin: "0px" }}>{currentGroup ? currentGroup.component : currentTab.component}</h2>
             </div>
         </div>
     );
