@@ -49,7 +49,7 @@ const TabSwitcher = ({ tabs, onTabChange }) => {
     }
 
     return (
-        <div >
+        <div style={{height:"100%",padding:"10px 0px"}}>
             <div >
                 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }} >
                     {tabs.map((tab, index) => (
@@ -75,7 +75,7 @@ const TabSwitcher = ({ tabs, onTabChange }) => {
 
             {/* Content Area */}
             <div
-                className="bg-bg-page-body pt-[75px] flex-grow overflow-y-auto relative"
+                style={{height:"100%",background:"lightGrey",padding:"10px"}}
                 {...handlers}
             >
                 {tabs[activeTabIndex] && tabs[activeTabIndex].component}
