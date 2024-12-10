@@ -160,7 +160,7 @@ const TabSwitcher = ({ tabs }) => {
                                     display: "flex",
                                     // alignItems: "center",
                                     justifyContent: "center",
-                                    backgroundColor: currentGroup?.bg ? currentGroup.bg : currentTab.bg,
+                                    backgroundColor: group.bg ,
                                 }}
                             >
                                 <h3 style={{ padding: "30px 0px" }}>
