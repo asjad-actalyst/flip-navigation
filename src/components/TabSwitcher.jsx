@@ -44,6 +44,22 @@ const TabSwitcher = ({ tabs }) => {
     };
 
     const tabHandlers = useSwipeable({
+        onSwipedLeft: () => {
+            if (activeTabIndex < tabs.length - 1) {
+                const newIndex = activeTabIndex + 1;
+                setActiveTabIndex(newIndex);
+                setActiveGroupIndex(0); // Reset group index when switching tabs
+                navigate(tabs[newIndex].path);
+            }
+        },
+        onSwipedRight: () => {
+            if (activeTabIndex > 0) {
+                const newIndex = activeTabIndex - 1;
+                setActiveTabIndex(newIndex);
+                setActiveGroupIndex(0); // Reset group index when switching tabs
+                navigate(tabs[newIndex].path);
+            }
+        },
         onSwipedUp: () => {
             const groups = tabs[activeTabIndex].groups || [];
             if (activeGroupIndex < groups.length - 1) {
