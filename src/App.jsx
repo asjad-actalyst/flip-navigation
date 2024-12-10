@@ -10,9 +10,9 @@ const tabs = [
     bg: "lightGrey",
     path: "/",
     groups: [
-      { label: "News", component: <div>News</div>, path: "/" },
-      { label: "Chat", component: <div>Chat</div>, path: "/chat" },
-      { label: "Insights", component: <div>Insights</div>, path: "/insights" },
+      { label: "News", component: <div>News</div>, path: "/",bg:"#F0F8FF" },
+      { label: "Chat", component: <div>Chat</div>, path: "/chat",bg:"#6495ED" },
+      { label: "Insights", component: <div>Insights</div>, path: "/insights",bg:"#00CED1" },
     ],
   },
   {
@@ -21,8 +21,8 @@ const tabs = [
     bg: "lightGreen",
     path: "/profile",
     groups: [
-      { label: "User", component: <div>User</div>, path: "/profile" },
-      { label: "Admin", component: <div>Admin</div>, path: "/profile/admin" },
+      { label: "User", component: <div>User</div>, path: "/profile",bg:"#FFFAF0" },
+      { label: "Admin", component: <div>Admin</div>, path: "/profile/admin",bg:"#F0FFF0" },
     ],
   },
   {
