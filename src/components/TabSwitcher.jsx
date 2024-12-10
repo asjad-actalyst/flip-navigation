@@ -43,12 +43,6 @@ const TabSwitcher = ({ tabs }) => {
                 navigate(tabs[newIndex].path);
             }
         },
-        trackTouch: true,
-        trackMouse: true,
-        delta: 1,
-    });
-
-    const groupHandlers = useSwipeable({
         onSwipedUp: () => {
             const groups = tabs[activeTabIndex].groups || [];
             if (activeGroupIndex < groups.length - 1) {
@@ -68,6 +62,27 @@ const TabSwitcher = ({ tabs }) => {
         trackMouse: true,
         delta: 1,
     });
+
+    // const groupHandlers = useSwipeable({
+    //     onSwipedUp: () => {
+    //         const groups = tabs[activeTabIndex].groups || [];
+    //         if (activeGroupIndex < groups.length - 1) {
+    //             const newIndex = activeGroupIndex + 1;
+    //             setActiveGroupIndex(newIndex);
+    //             navigate(groups[newIndex].path); // Navigate to the next group's route
+    //         }
+    //     },
+    //     onSwipedDown: () => {
+    //         if (activeGroupIndex > 0) {
+    //             const newIndex = activeGroupIndex - 1;
+    //             setActiveGroupIndex(newIndex);
+    //             navigate(tabs[activeTabIndex].groups[newIndex].path); // Navigate to the previous group's route
+    //         }
+    //     },
+    //     trackTouch: true,
+    //     trackMouse: true,
+    //     delta: 1,
+    // });
     const handleGroupClick = (index) => {
         if (activeGroupIndex !== index) {
             setActiveGroupIndex(index); // Update the active group index
@@ -116,7 +131,7 @@ const TabSwitcher = ({ tabs }) => {
                     background: currentTab.bg,
                     touchAction: "none", // Prevent browser interference
                 }}
-                {...groupHandlers}
+               
                 {...tabHandlers}
             >
                 <h2 style={{ padding: "30px 0px", margin: "0px" }}>{currentGroup ? currentGroup.component : currentTab.component}</h2>
