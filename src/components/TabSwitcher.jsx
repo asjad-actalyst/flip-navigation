@@ -150,7 +150,7 @@ const TabSwitcher = ({ tabs }) => {
                         transform: `translateY(-${activeGroupIndex * 100}%)`,
                     }}
                 >
-                    {tabs[activeTabIndex].groups &&
+                    {tabs[activeTabIndex].groups ?
                         tabs[activeTabIndex].groups.map((group, index) => (
                             <div
                                 key={index}
@@ -158,14 +158,33 @@ const TabSwitcher = ({ tabs }) => {
                                     height: "100%",
                                     width: "100%",
                                     display: "flex",
-                                    alignItems: "center",
+                                    // alignItems: "center",
                                     justifyContent: "center",
                                     backgroundColor: currentGroup?.bg ? currentGroup.bg : currentTab.bg,
                                 }}
                             >
-                                {group.component}
+                                <h3 style={{ padding: "30px 0px" }}>
+                                    {group.component}
+                                </h3>
                             </div>
-                        ))}
+                        )) :
+                        <div
+
+                            style={{
+                                height: "100%",
+                                width: "100%",
+                                display: "flex",
+                                // alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: tabs[activeTabIndex].bg,
+                            }}
+                        >
+                            <h3 style={{ padding: "30px 0px" }}>
+
+                                {tabs[activeTabIndex].component}
+                            </h3>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
